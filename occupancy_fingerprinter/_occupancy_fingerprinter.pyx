@@ -1,4 +1,4 @@
-import cython
+cimport cython
 import numpy as np
 cimport numpy as np
 import math
@@ -134,8 +134,7 @@ def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
             return corners
 
 @cython.boundscheck(False)
-def c_fingerprint(   str name,
-                            np.ndarray[np.float64_t, ndim=2] crd,
+def c_fingerprint(          np.ndarray[np.float64_t, ndim=2] crd,
                             np.ndarray[np.float64_t, ndim=1] grid_x,
                             np.ndarray[np.float64_t, ndim=1] grid_y,
                             np.ndarray[np.float64_t, ndim=1] grid_z,
@@ -155,20 +154,20 @@ def c_fingerprint(   str name,
         Py_ssize_t i, j, k
         Py_ssize_t atom_ind
         double radius
-        np.ndarray[np.float64_t, ndim=3] grid = np.zeros([i_max, j_max, k_max], dtype=np.float)
+        np.ndarray[np.float64_t, ndim=3] grid = np.zeros([i_max, j_max, k_max], dtype=np.float64)
         np.ndarray[np.float64_t, ndim=3] grid_tmp
         np.ndarray[np.float64_t, ndim=1] atom_coordinate
 
-    grid_tmp = np.empty([i_max, j_max, k_max], dtype=np.float)
+    # grid_tmp = np.empty([i_max, j_max, k_max], dtype=np.float)
     for atom_ind in range(natoms):
         atom_coordinate = crd[atom_ind]
+        if atom_coordinate[0] > 19:
+            print(atom_coordinate)
         radius = atom_radii[atom_ind]
         corners = c_corners_within_radius(atom_coordinate, radius, origin_crd, uper_most_corner_crd,
                                               uper_most_corner, spacing, grid_x, grid_y, grid_z, grid_counts)
+        if len(corners) > 0:
+            print(corners)
         for i, j, k in corners:
             grid[i,j,k] = 1.
     return grid
-
-@cython.boundscheck(False)
-def c_fingerprint():
-    print("TODO")

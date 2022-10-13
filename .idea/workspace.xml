@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="68b6e2b9-dd39-4a4b-b1a4-802b36a150b3" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/occupancy_fingerprinter/_occupancy_fingerprinter.pyx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/occupancy_fingerprinter/_occupancy_fingerprinter.pyx" beforeDir="false" afterPath="$PROJECT_DIR$/occupancy_fingerprinter/_occupancy_fingerprinter.pyx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/occupancy_fingerprinter/occupancy_fingerprinter.py" beforeDir="false" afterPath="$PROJECT_DIR$/occupancy_fingerprinter/occupancy_fingerprinter.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -32,9 +33,9 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="$USER_HOME$/anaconda3/envs/fft/bin/python" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/occupancy_fingerprinter" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
@@ -63,6 +64,9 @@
       <updated>1665433558181</updated>
       <workItem from="1665433559759" duration="7173000" />
       <workItem from="1665516468143" duration="13761000" />
+      <workItem from="1665577809556" duration="4007000" />
+      <workItem from="1665586168266" duration="8842000" />
+      <workItem from="1665606920174" duration="5971000" />
     </task>
     <servers />
   </component>
@@ -82,6 +86,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/occupancy_fingerprinter$occupancy_fingerprinter.coverage" NAME="occupancy_fingerprinter Coverage Results" MODIFIED="1665441986439" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/occupancy_fingerprinter" />
+    <SUITE FILE_PATH="coverage/occupancy_fingerprinter$occupancy_fingerprinter.coverage" NAME="occupancy_fingerprinter Coverage Results" MODIFIED="1665612795552" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/occupancy_fingerprinter" />
   </component>
 </project>
