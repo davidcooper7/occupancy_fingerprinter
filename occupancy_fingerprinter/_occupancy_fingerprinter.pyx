@@ -71,8 +71,8 @@ def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
                             np.ndarray[np.int64_t, ndim=1]   grid_counts):
     cdef:
         list corners
-        int count_i, count_j, count_k
-        int i, j, k
+        Py_ssize_t count_i, count_j, count_k
+        Py_ssize_t i, j, k
         float r, R
 
         np.ndarray[np.int64_t, ndim=1] lower_corner
@@ -155,19 +155,15 @@ def c_fingerprint(          np.ndarray[np.float64_t, ndim=2] crd,
         Py_ssize_t atom_ind
         double radius
         np.ndarray[np.float64_t, ndim=3] grid = np.zeros([i_max, j_max, k_max], dtype=np.float64)
-        np.ndarray[np.float64_t, ndim=3] grid_tmp
+        double[:,:,:] grid_view = grid
         np.ndarray[np.float64_t, ndim=1] atom_coordinate
 
     # grid_tmp = np.empty([i_max, j_max, k_max], dtype=np.float)
     for atom_ind in range(natoms):
         atom_coordinate = crd[atom_ind]
-        if atom_coordinate[0] > 19:
-            print(atom_coordinate)
         radius = atom_radii[atom_ind]
         corners = c_corners_within_radius(atom_coordinate, radius, origin_crd, uper_most_corner_crd,
                                               uper_most_corner, spacing, grid_x, grid_y, grid_z, grid_counts)
-        if len(corners) > 0:
-            print(corners)
         for i, j, k in corners:
-            grid[i,j,k] = 1.
+            grid_view[i,j,k] = 1.
     return grid
