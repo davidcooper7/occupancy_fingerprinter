@@ -4,6 +4,7 @@ import numpy as np
 import concurrent.futures
 from _occupancy_fingerprinter import c_fingerprint
 import h5py as h5
+import multiprocessing
 
 
 def process_trajectory(traj, sites, atom_radii):
@@ -35,11 +36,15 @@ class Grid():
 
     def cal_fingerprint(self, FN, n_tasks=0):
         assert len(self._sites) != 0, "No binding sites set."
-        print(f"Calculating fingerprint for {self._n_sites} sites for trajectory of {self._traj.n_frames} frames")
         if n_tasks == 0:
-            task_divisor = 22
+            task_divisor = multiprocessing.cpu_count()
         else:
-            task_divisor = n_tasks
+            if n_tasks > multiprocessing.cpu_count():
+                task_divisor = multiprocessing.cpu_count()
+            else:
+                task_divisor = n_tasks
+        print(
+            f"Calculating fingerprint for {self._n_sites} sites for trajectory of {self._traj.n_frames} frames using {task_divisor} of {multiprocessing.cpu_count()} cpu cores")
         with concurrent.futures.ProcessPoolExecutor() as executor:
             result_list = []
             for i in range(task_divisor):
@@ -176,7 +181,7 @@ if __name__ == "__main__":
 
     import time
     start_time = time.time()
-    grid.cal_fingerprint("./data/fingerprints.h5")
+    grid.cal_fingerprint("./data/fingerprints.h5", n_tasks=32)
     print("--- %s seconds ---" % (time.time() - start_time))
 
 
