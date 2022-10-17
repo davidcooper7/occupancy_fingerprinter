@@ -2,14 +2,18 @@
 import mdtraj as md
 import numpy as np
 import concurrent.futures
-from _occupancy_fingerprinter import c_fingerprint
 import h5py as h5
 import multiprocessing
+
+try:
+    from _occupancy_fingerprinter import c_fingerprint
+except:
+    from occupancy_fingerprinter._occupancy_fingerprinter import c_fingerprint
 
 
 def process_trajectory(traj, sites, atom_radii):
     total_size = 0
-    for site in grid._sites.values():
+    for site in sites.values():
         total_size += site._size
     fingerprints = np.zeros((traj.n_frames,total_size), dtype=np.int64)
     for i, frame in enumerate(traj):
