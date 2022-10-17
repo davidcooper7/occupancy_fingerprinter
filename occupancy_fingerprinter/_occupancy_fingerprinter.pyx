@@ -158,7 +158,6 @@ def c_fingerprint(          np.ndarray[np.float64_t, ndim=2] crd,
         double[:,:,:] grid_view = grid
         np.ndarray[np.float64_t, ndim=1] atom_coordinate
 
-    # grid_tmp = np.empty([i_max, j_max, k_max], dtype=np.float)
     for atom_ind in range(natoms):
         atom_coordinate = crd[atom_ind]
         radius = atom_radii[atom_ind]

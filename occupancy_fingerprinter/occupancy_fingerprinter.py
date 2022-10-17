@@ -7,14 +7,11 @@ import h5py as h5
 
 
 def process_trajectory(traj, sites, atom_radii):
-    # TODO: add multiprocessing for this
-    print("unimplemented")
     total_size = 0
     for site in grid._sites.values():
         total_size += site._size
-    fingerprints = np.zeros((n_frames,total_size), dtype=np.int64)
+    fingerprints = np.zeros((traj.n_frames,total_size), dtype=np.int64)
     for i, frame in enumerate(traj):
-        print(f"Calculating frame {i}, of traj with {traj.n_frames} frames")
         site_list = []
         for site in sites.values():
             site_list.append(c_fingerprint(frame.xyz[0].astype(np.float64) * 10.,
@@ -38,6 +35,7 @@ class Grid():
 
     def cal_fingerprint(self, FN, n_tasks=0):
         assert len(self._sites) != 0, "No binding sites set."
+        print(f"Calculating fingerprint for {self._n_sites} sites for trajectory of {self._traj.n_frames} frames")
         if n_tasks == 0:
             task_divisor = 22
         else:
@@ -82,14 +80,11 @@ class BindingSite():
 
     def get_origin(self):
         origin_corner = ((self._counts-1)*self._spacing)/2
-        print(origin_corner, self._center - origin_corner, self._center, self._center+origin_corner)
         return self._center - origin_corner
 
     def get_grid_counts(self):
         d = ((self._r)*2)
-        print(d)
         counts = (np.array([d,d,d])/self._spacing)+1
-        print("counts - 1", (counts-1)*self._spacing)
         return counts.astype(np.int64)
 
     def _cal_grid_coordinates(self):
