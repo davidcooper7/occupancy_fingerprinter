@@ -1,34 +1,72 @@
 """Provide the primary functions."""
 import mdtraj as md
 import numpy as np
+import concurrent.futures
 from _occupancy_fingerprinter import c_fingerprint
+import h5py as h5
 
+
+def process_trajectory(traj, sites, atom_radii):
+    # TODO: add multiprocessing for this
+    print("unimplemented")
+    total_size = 0
+    for site in grid._sites.values():
+        total_size += site._size
+    fingerprints = np.zeros((n_frames,total_size), dtype=np.int64)
+    for i, frame in enumerate(traj):
+        print(f"Calculating frame {i}, of traj with {traj.n_frames} frames")
+        site_list = []
+        for site in sites.values():
+            site_list.append(c_fingerprint(frame.xyz[0].astype(np.float64) * 10.,
+                                 site._grid_x,
+                                 site._grid_y,
+                                 site._grid_z,
+                                 site._origin,
+                                 site._upper_most_corner_crd,
+                                 site._upper_most_corner,
+                                 site._spacing,
+                                 site._counts,
+                                 atom_radii))
+        fingerprints[i, :] = np.concatenate(site_list, axis=0).flatten()
+    return fingerprints
 class Grid():
     def __init__(self, traj):
+        self._traj = traj
         self._n_sites = 0
         self._sites = {}
         self._atom_radii = np.array([md.geometry.sasa._ATOMIC_RADII[atom.element.symbol] for atom in traj.top.atoms], dtype=np.float64)*10.
 
-    def calc_fingerprint(self, frame, site):
+    def cal_fingerprint(self, FN, n_tasks=0):
         assert len(self._sites) != 0, "No binding sites set."
-        return c_fingerprint(frame.xyz[0].astype(np.float64)*10.,
-                             site._grid_x,
-                             site._grid_y,
-                             site._grid_z,
-                             site._origin,
-                             site._upper_most_corner_crd,
-                             site._upper_most_corner,
-                             site._spacing,
-                             site._counts,
-                             self._atom_radii*.80)
+        if n_tasks == 0:
+            task_divisor = 22
+        else:
+            task_divisor = n_tasks
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            result_list = []
+            for i in range(task_divisor):
+                n_frames = self._traj.n_frames
+                n_frames_i = n_frames // task_divisor
+                if i == task_divisor - 1:
+                    n_frames_i += n_frames % task_divisor
+                frame_ind = i * (self._traj.n_frames // task_divisor)
+                result_list.append(executor.submit(
+                    process_trajectory,
+                    self._traj[frame_ind:frame_ind+n_frames_i],
+                    self._sites,
+                    self._atom_radii
+                ))
+            frames_list = []
+            for i in range(task_divisor):
+                partial_frames = result_list[i].result()
+                frames_list.append(partial_frames)
+            fingerprints = np.concatenate(tuple(frames_list), axis=0)
+            with h5.File(FN, 'w') as f:
+                f.create_dataset("frames", data=fingerprints, compression="gzip")
 
     def add_binding_site(self, center, r, spacing):
         self._sites[self._n_sites] = BindingSite(center, r, spacing)
         self._n_sites += 1
-
-    def process_trajectory(self):
-        #TODO: add multiprocessing for this
-        print("unimplemented")
 
 class BindingSite():
     def __init__(self, center, r, spacing):
@@ -136,34 +174,14 @@ if __name__ == "__main__":
 
     grid = Grid(t)
     center1 = np.array([58.390,73.130,27.410])
-    # center1 = np.array([10., 10., 10.])
     center2 = np.array([90.460,85.970,50.260])
-    # spacing = np.array([0.25,0.25,0.25])
     spacing = np.array([0.5, 0.5, 0.5])
     grid.add_binding_site(center1,8.,spacing)
     grid.add_binding_site(center2,8.,spacing)
 
-    total_size = 0
-    for site in grid._sites.values():
-        total_size += site._size
-    fingerprints = np.zeros((t.n_frames, total_size), dtype=np.int64)
-
     import time
     start_time = time.time()
-    for i, frame in enumerate(t[:20]):
-        c = grid.calc_fingerprint(t[i], grid._sites[0])
-        d = grid.calc_fingerprint(t[i], grid._sites[1])
-        flat_sites = np.concatenate([c,d]).flatten()
-        fingerprints[i, :] = flat_sites
-    # c = grid.calc_fingerprint(t[0], grid._sites[0])
-    # d = grid.calc_fingerprint(t[0], grid._sites[1])
+    grid.cal_fingerprint("./data/fingerprints.h5")
     print("--- %s seconds ---" % (time.time() - start_time))
-    grid._sites[0].write("./data/site0.dx", c)
-    grid._sites[1].write("./data/site1.dx", d)
-    import h5py as h5
-    f = h5.File('fingerprints.h5', 'w')
-    f1 = h5.File('fingerprints_compressed.h5', 'w')
-    dset = f.create_dataset("init", data=fingerprints)
-    dset2 = f1.create_dataset("init", data=fingerprints, compression="gzip")
 
 
