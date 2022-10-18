@@ -8,6 +8,10 @@ dependencies:
     # Base depends
   - python
   - pip
+  - mdtraj
+  - Cython
+  - numpy
+  - h5py
 
     # Testing
   - pytest
