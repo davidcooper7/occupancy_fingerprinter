@@ -1,5 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0", "versioningit~=2.0", "versioneer", "Cython", "numpy"]
+# requires = ["setuptools>=61.0", "versioningit~=2.0", "versioneer", "Cython", "numpy"]
+requires = ["setuptools>=61.0", "versioneer", "Cython", "numpy"]
 build-backend = "setuptools.build_meta"
 
 # Self-descriptive entries which should always be present
@@ -69,10 +70,10 @@ occupancy_fingerprinter = [
 [tool.versioningit]
 default-version = "1+unknown"
 
-[tool.versioningit.format]
-distance = "{base_version}+{distance}.{vcs}{rev}"
-dirty = "{base_version}+{distance}.{vcs}{rev}.dirty"
-distance-dirty = "{base_version}+{distance}.{vcs}{rev}.dirty"
+# [tool.versioningit.format]
+# distance = "{base_version}+{distance}.{vcs}{rev}"
+# dirty = "{base_version}+{distance}.{vcs}{rev}.dirty"
+# distance-dirty = "{base_version}+{distance}.{vcs}{rev}.dirty"
 
 [tool.versioningit.vcs]
 # The method key:
