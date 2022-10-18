@@ -7,6 +7,11 @@ Occupancy Fingerprinter
 
 A tool to generate grid-based binding site shapes.
 
+### Installation
+1) ```git clone https://github.com/jimtufts/occupancy_fingerprinter.git```
+2) ```cd occupancy_fingerprinter```   
+3) ```pip install -e .```
+
 ### Copyright
 
 Copyright (c) 2022, Jim Tufts
