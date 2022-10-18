@@ -88,7 +88,7 @@ occupancy_fingerprinter = [
 [tool.versioneer]
 VCS = "git"
 style = "pep440"
-versionfile_source = occupancy_fingerprinter/occupancy_fingerprinter/_version.py
-versionfile_build = occupancy_fingerprinter/_version.py
+versionfile_source = "occupancy_fingerprinter/occupancy_fingerprinter/_version.py"
+versionfile_build = "occupancy_fingerprinter/_version.py"
 tag_prefix = ""
 parentdir_prefix = "occupancy_fingerprinter-"
