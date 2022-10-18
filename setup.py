@@ -23,6 +23,7 @@ except:
 try:
     from setuptools import setup
     from setuptools import Extension
+    from setuptools import find_packages
     from Cython.Build import cythonize
 except ImportError:
     from distutils.core import setup
