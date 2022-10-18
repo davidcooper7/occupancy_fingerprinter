@@ -5,7 +5,7 @@ Occupancy Fingerprinter
 A tool to generate grid-based binding site shapes.
 """
 import sys
-from setuptools import setup, find_packages
+from setuptools import setup, Extension, find_packages
 import versioneer
 
 short_description = __doc__.split("\n")
@@ -31,9 +31,8 @@ except ImportError:
 from Cython.Distutils import build_ext
 import numpy
 
-setup(
-    # Self-descriptive entries which should always be present
-    name='Occupancy Fingerprinter',
+metadata = \
+    dict(name='Occupancy Fingerprinter',
     author='Jim Tufts',
     author_email='jtufts@hawk.iit.edu',
     description=short_description[0],
@@ -44,35 +43,44 @@ setup(
     license='MIT',
     ext_modules = cythonize("occupancy_fingerprinter/_occupancy_fingerprinter.pyx"),
     include_dirs=[numpy.get_include()],
-
-    # Which Python importable modules should be included when your package is installed
-    # Handled automatically by setuptools. Use 'exclude' to prevent some specific
-    # subpackage(s) from being added, if needed
     packages=find_packages(),
-
-    # Optional include package data to ship with your package
-    # Customize MANIFEST.in if the general case does not suit your needs
-    # Comment out this line to prevent the files from being packaged with your software
     include_package_data=True,
-
-    # Allows `setup.py test` to work correctly with pytest
     setup_requires=[] + pytest_runner,
-
-    # Additional entries you may want simply uncomment the lines you want and fill in the data
-    # url='http://www.my_package.com',  # Website
-    # install_requires=[],              # Required packages, pulls from pip if needed; do not use for Conda deployment
-    # platforms=['Linux',
-    #            'Mac OS-X',
-    #            'Unix',
-    #            'Windows'],            # Valid platforms your code works on, adjust to your flavor
-    # python_requires=">=3.5",          # Python version restrictions
-
-    # Manual control if final package is compressible or not, set False to prevent the .egg from being made
     zip_safe=False,
+    )
 
-)
+def extension():
+    return [
+            Extension('occupancy_fingerprinter._occupancy_fingerprinter',
+                sources=['occupancy_fingerprinter/_occupancy_fingerprinter.pyx',],
+                include_dirs=[numpy.get_include()],
+                language='c'),
+        ]
 
+if __name__ == '__main__':
+    run_build = True
+    if run_build:
+        extensions = extension()
+        try:
+            import Cython as _c
+            from Cython.Build import cythonize
 
+            if _c.__version__ < '0.29':
+                raise ImportError("Too old")
+        except ImportError as e:
+            print('setup depends on Cython (>=0.29). Install it prior invoking setup.py')
+            print(e)
+            sys.exit(1)
+        try:
+            import numpy as np
+        except ImportError:
+            print('setup depends on NumPy. Install it prior invoking setup.py')
+            sys.exit(1)
+        for e in extensions:
+            e.include_dirs.append(np.get_include())
+        metadata['ext_modules'] = cythonize(extensions, language_level=sys.version_info[0])
+
+    setup(**metadata)
 # from setuptools import find_packages, setup
 # from Cython.Build import cythonize
 # import numpy as np

@@ -17,9 +17,9 @@ def test_occupancy_fingerprinter_imported():
     """Sample test, will always pass so long as import statement worked."""
     assert "occupancy_fingerprinter" in sys.modules
 
-def test_binding_site()
+def test_binding_site():
     """Test binding site init"""
-    center = np.array([10.,10.10.])
+    center = np.array([10.,10.,10.])
     r = 5.
     spacing = np.array([1., 1., 1.])
     b = BindingSite(center, r, spacing)
@@ -27,4 +27,4 @@ def test_binding_site()
     assert b._r == r 
     assert b._spacing == spacing
     assert b._counts == b.get_grid_counts()
-    assert b._origin = b.get_origin()
+    assert b._origin == b.get_origin()
