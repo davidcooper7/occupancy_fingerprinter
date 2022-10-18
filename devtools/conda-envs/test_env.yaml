@@ -12,6 +12,7 @@ dependencies:
   - Cython
   - numpy
   - h5py
+  - versioneer
 
     # Testing
   - pytest
