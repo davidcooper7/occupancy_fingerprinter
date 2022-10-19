@@ -46,7 +46,6 @@ jobs:
       - name: Install package
         # conda setup requires this special shell
         shell: bash -l {0}
-        - uses: actions/checkout@v3
         run: |
           python -m pip install . --no-deps
           pip install -e .
@@ -54,6 +53,7 @@ jobs:
 
       - name: Run tests
         # conda setup requires this special shell
+        working-directory: ./occupancy_fingerprinter/tests
         shell: bash -l {0}
         run: |
           pytest -v --cov=occupancy_fingerprinter --cov-report=xml --color=yes occupancy_fingerprinter/tests/
