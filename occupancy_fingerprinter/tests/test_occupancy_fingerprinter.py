@@ -58,7 +58,7 @@ def test_grid_init():
     assert g._n_sites == 1
     assert (g._sites[0]._center == b._center).all()
     assert g._sites[0]._r == b._r
-    assert (g._sites[0]._spacing == b._center._spacing).all()
+    assert (g._sites[0]._spacing == b._spacing).all()
 
 
 
