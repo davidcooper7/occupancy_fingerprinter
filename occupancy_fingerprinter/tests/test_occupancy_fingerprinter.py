@@ -52,8 +52,10 @@ def test_grid_init():
     spacing = np.array([1., 1., 1.])
     g = Grid(t)
     assert g._n_sites == 0
-    assertDictEqual(g._sites, {})
+    assert g._sites == {}
     g.add_binding_site(center, r, spacing)
+    b = BindingSite(center,r,spacing)
     assert g._n_sites == 1
+    assert g._sites == b
 
 
