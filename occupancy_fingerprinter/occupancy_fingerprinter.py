@@ -162,12 +162,6 @@ object 3 class array type double rank 0 items {3} data follows
         else:
             raise Exception('File type not supported')
 
-
-
-
-
-
-
 if __name__ == "__main__":
     # Do something if this file is invoked on its own
     traj_path = "./data/CLONE0.xtc"

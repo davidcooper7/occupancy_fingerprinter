@@ -9,8 +9,10 @@ import pytest
 
 import occupancy_fingerprinter
 from occupancy_fingerprinter import BindingSite
+from occupancy_fingerprinter import Grid
 
 import numpy as np
+import mdtraj as md
 
 
 def test_occupancy_fingerprinter_imported():
@@ -35,4 +37,18 @@ def test_binding_site_init():
     assert (b._upper_most_corner_crd == (b._center + ((b._counts - 1) * b._spacing)/2)).all()
     assert (b._upper_most_corner == (b._counts - 1)).all()
     assert (b._size == np.prod(b._counts))
+
+def test_grid_init():
+    traj_path = "../data/CLONE0.xtc"
+    top_path = "../data/prot_masses.pdb"
+    t = md.Load(traj_path, top=top_path)
+    center = np.array([10., 10., 10.])
+    r = 3.
+    spacing = np.array([1., 1., 1.])
+    g = Grid(t)
+    assert g._n_sites == 0
+    assertDictEqual(g._sites, {})
+    g.add_binding_site(center, r, spacing)
+    assert g._n_sites == 1
+
 
