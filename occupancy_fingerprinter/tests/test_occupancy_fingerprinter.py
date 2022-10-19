@@ -23,6 +23,7 @@ def test_binding_site_init():
     r = 5.
     spacing = np.array([1., 1., 1.])
     b = BindingSite(center, r, spacing)
+    grid_x, grid_y, grid_z = b._cal_grid_coordinates()
     assert (b._center == center).all()
     assert b._r == r 
     assert (b._spacing == spacing).all()
