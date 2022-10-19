@@ -56,6 +56,9 @@ def test_grid_init():
     g.add_binding_site(center, r, spacing)
     b = BindingSite(center,r,spacing)
     assert g._n_sites == 1
-    assert g._sites == b
+    assert g._sites[0]._center == b._center
+    assert g._sites[0]._r == b._r
+    assert (g._sites[0]._spacing == b._center._spacing).all()
+
 
 
