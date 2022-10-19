@@ -44,8 +44,8 @@ def test_binding_site_init():
     assert (b._size == np.prod(b._counts))
 
 def test_grid_init():
-    traj_path = (mod_path / "./data/CLONE0.xtc").resolve()
-    top_path = (mod_path / "./data/prot_masses.pdb").resolve()
+    traj_path = (mod_path / "../data/CLONE0.xtc").resolve()
+    top_path = (mod_path / "../data/prot_masses.pdb").resolve()
     t = md.load(traj_path, top=top_path)
     center = np.array([10., 10., 10.])
     r = 3.
