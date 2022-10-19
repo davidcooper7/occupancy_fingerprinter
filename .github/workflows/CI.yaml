@@ -53,7 +53,6 @@ jobs:
 
       - name: Run tests
         # conda setup requires this special shell
-        working-directory: ./occupancy_fingerprinter/tests
         shell: bash -l {0}
         run: |
           pytest -v --cov=occupancy_fingerprinter --cov-report=xml --color=yes occupancy_fingerprinter/tests/
