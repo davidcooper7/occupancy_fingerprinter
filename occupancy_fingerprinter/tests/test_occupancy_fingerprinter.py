@@ -41,8 +41,8 @@ def test_binding_site_init():
 
 def test_grid_init():
     print(os.getcwd())
-    traj_path = "/home/runner/work/occupancy_fingerprinter/occupancy_fingerprinter/data/CLONE0.xtc"
-    top_path = "/home/runner/work/occupancy_fingerprinter/occupancy_fingerprinter/data/prot_masses.pdb"
+    traj_path = "./data/CLONE0.xtc"
+    top_path = "./data/prot_masses.pdb"
     t = md.load(traj_path, top=top_path)
     center = np.array([10., 10., 10.])
     r = 3.
