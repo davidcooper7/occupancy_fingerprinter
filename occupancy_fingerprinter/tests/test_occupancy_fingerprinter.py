@@ -41,7 +41,7 @@ def test_binding_site_init():
 def test_grid_init():
     traj_path = "../data/CLONE0.xtc"
     top_path = "../data/prot_masses.pdb"
-    t = md.Load(traj_path, top=top_path)
+    t = md.load(traj_path, top=top_path)
     center = np.array([10., 10., 10.])
     r = 3.
     spacing = np.array([1., 1., 1.])
