@@ -13,6 +13,7 @@ from occupancy_fingerprinter import Grid
 
 import numpy as np
 import mdtraj as md
+import os
 
 
 def test_occupancy_fingerprinter_imported():
@@ -39,6 +40,7 @@ def test_binding_site_init():
     assert (b._size == np.prod(b._counts))
 
 def test_grid_init():
+    print(os.getcwd())
     traj_path = "../data/CLONE0.xtc"
     top_path = "../data/prot_masses.pdb"
     t = md.load(traj_path, top=top_path)
