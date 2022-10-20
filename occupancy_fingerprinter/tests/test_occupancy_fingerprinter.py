@@ -64,16 +64,33 @@ def test_grid_init():
     h5_path = (mod_path / "../data/test.h5").resolve()
     a = g.cal_fingerprint(h5_path, n_tasks=1, return_array=True)
     assert (a.sum() == 113)
+    #check h5 file integrity
     with h5.File(h5_path, "r") as f:
         k = list(f.keys())
         assert k[0] == "frames"
         assert (f[k[0]] == a[0]).all()
+    #test process_trajectory function
     p = occupancy_fingerprinter.process_trajectory(t,g._sites,g._atom_radii)
     assert (a == p).all()
+    #test writing dx files
     dx_path = (mod_path / "../data/binding_site_test.dx").resolve()
     c = a[0].reshape(tuple(b._counts))
     b.write(dx_path, c)
     assert os.path.exists(dx_path)
+
+def test_cal_fingerprint():
+    traj_path = (mod_path / "../data/CLONE0.xtc").resolve()
+    top_path = (mod_path / "../data/prot_masses.pdb").resolve()
+    t = md.load(traj_path, top=top_path)
+    t = t[:1]
+    center = np.array([58., 73., 27.])
+    r = 3.
+    spacing = np.array([1., 1., 1.])
+    g = Grid(t)
+    g.add_binding_site(center, r, spacing)
+    g.cal_fingerprint(None, n_tasks=0)
+    g.cal_fingerprint(None, n_tasks=999)
+
 
 
 

@@ -70,8 +70,9 @@ class Grid():
                 partial_frames = result_list[i].result()
                 frames_list.append(partial_frames)
             fingerprints = np.concatenate(tuple(frames_list), axis=0)
-            with h5.File(FN, 'w') as f:
-                f.create_dataset("frames", data=fingerprints, compression="gzip")
+            if FN != None:
+                with h5.File(FN, 'w') as f:
+                    f.create_dataset("frames", data=fingerprints, compression="gzip")
             if return_array:
                 return fingerprints
 
@@ -161,7 +162,7 @@ object 3 class array type double rank 0 items {3} data follows
         }
         if str(FN).endswith('.dx') or str(FN).endswith('.dx.gz'):
             self.write_dx(FN, data, grid)
-        else:
+        else: # pragma: no cover
             raise Exception('File type not supported')
 
 
@@ -172,14 +173,13 @@ if __name__ == "__main__": # pragma: no cover
     from pathlib import Path
 
     mod_path = Path(__file__).parent
-    start_time = time.time()
 
     traj_path = (mod_path / "../data/CLONE0.xtc").resolve()
     top_path = (mod_path / "../data/prot_masses.pdb").resolve()
     t = md.load(traj_path, top=top_path)
     t = t[:1]
     n_frames = t.n_frames
-
+    start_time = time.time()
     grid = Grid(t)
     # real test
     # center1 = np.array([58.390,73.130,27.410])
