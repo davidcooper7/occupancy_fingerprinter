@@ -33,24 +33,24 @@ def c_get_corner_crd(np.ndarray[np.int64_t, ndim=1] corner,
 @cython.boundscheck(False)
 def c_is_in_grid(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
                  np.ndarray[np.float64_t, ndim=1] origin_crd,
-                 np.ndarray[np.float64_t, ndim=1] uper_most_corner_crd):
+                 np.ndarray[np.float64_t, ndim=1] upper_most_corner_crd):
     cdef int i, lmax
     lmax = atom_coordinate.shape[0]
     for i in range(lmax):
-        if (atom_coordinate[i] < origin_crd[i]) or (atom_coordinate[i] >= uper_most_corner_crd[i]):
+        if (atom_coordinate[i] < origin_crd[i]) or (atom_coordinate[i] >= upper_most_corner_crd[i]):
             return False
     return True
 
 @cython.boundscheck(False)
 def c_lower_corner_of_containing_cube(  np.ndarray[np.float64_t, ndim=1] atom_coordinate,
                                         np.ndarray[np.float64_t, ndim=1] origin_crd,
-                                        np.ndarray[np.float64_t, ndim=1] uper_most_corner_crd,
+                                        np.ndarray[np.float64_t, ndim=1] upper_most_corner_crd,
                                         np.ndarray[np.float64_t, ndim=1] spacing):
     cdef:
         np.ndarray[np.float64_t, ndim=1] tmp
         np.ndarray[np.int64_t, ndim=1]   lower_corner
 
-    if not c_is_in_grid(atom_coordinate, origin_crd, uper_most_corner_crd):
+    if not c_is_in_grid(atom_coordinate, origin_crd, upper_most_corner_crd):
         return np.array([], dtype=int)
 
     tmp = atom_coordinate - origin_crd
@@ -62,8 +62,8 @@ def c_lower_corner_of_containing_cube(  np.ndarray[np.float64_t, ndim=1] atom_co
 def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
                             double radius,
                             np.ndarray[np.float64_t, ndim=1] origin_crd,
-                            np.ndarray[np.float64_t, ndim=1] uper_most_corner_crd,
-                            np.ndarray[np.int64_t, ndim=1]   uper_most_corner,
+                            np.ndarray[np.float64_t, ndim=1] upper_most_corner_crd,
+                            np.ndarray[np.int64_t, ndim=1]   upper_most_corner,
                             np.ndarray[np.float64_t, ndim=1] spacing,
                             np.ndarray[np.float64_t, ndim=1] grid_x,
                             np.ndarray[np.float64_t, ndim=1] grid_y,
@@ -82,14 +82,14 @@ def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
         np.ndarray[np.float64_t, ndim=1] corner_crd
         np.ndarray[np.float64_t, ndim=1] tmp
         np.ndarray[np.float64_t, ndim=1] lower_bound
-        np.ndarray[np.float64_t, ndim=1] uper_bound
+        np.ndarray[np.float64_t, ndim=1] upper_bound
         np.ndarray[np.float64_t, ndim=1] dx2, dy2, dz2
 
     assert radius >= 0, "radius must be non-negative"
     if radius == 0:
         return []
 
-    lower_corner = c_lower_corner_of_containing_cube(atom_coordinate, origin_crd, uper_most_corner_crd, spacing)
+    lower_corner = c_lower_corner_of_containing_cube(atom_coordinate, origin_crd, upper_most_corner_crd, spacing)
     if lower_corner.shape[0] > 0:
 
         lower_corner_crd = c_get_corner_crd(lower_corner, grid_x, grid_y, grid_z)
@@ -105,7 +105,7 @@ def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
 
                     corner = lower_corner + np.array([i, j, k], dtype=int)
 
-                    if np.all(corner >= 0) and np.all(corner <= uper_most_corner):
+                    if np.all(corner >= 0) and np.all(corner <= upper_most_corner):
                         corner_crd = c_get_corner_crd(corner, grid_x, grid_y, grid_z)
 
                         if cdistance(corner_crd, atom_coordinate) <= radius:
@@ -113,8 +113,8 @@ def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
         return corners
     else:
         lower_bound = origin_crd - radius
-        uper_bound = uper_most_corner_crd + radius
-        if np.any(atom_coordinate < lower_bound) or np.any(atom_coordinate > uper_bound):
+        upper_bound = upper_most_corner_crd + radius
+        if np.any(atom_coordinate < lower_bound) or np.any(atom_coordinate > upper_bound):
             return []
         else:
             dx2 = (grid_x - atom_coordinate[0]) ** 2
@@ -139,8 +139,8 @@ def c_fingerprint(          np.ndarray[np.float64_t, ndim=2] crd,
                             np.ndarray[np.float64_t, ndim=1] grid_y,
                             np.ndarray[np.float64_t, ndim=1] grid_z,
                             np.ndarray[np.float64_t, ndim=1] origin_crd,
-                            np.ndarray[np.float64_t, ndim=1] uper_most_corner_crd,
-                            np.ndarray[np.int64_t, ndim=1]   uper_most_corner,
+                            np.ndarray[np.float64_t, ndim=1] upper_most_corner_crd,
+                            np.ndarray[np.int64_t, ndim=1]   upper_most_corner,
                             np.ndarray[np.float64_t, ndim=1] spacing,
                             np.ndarray[np.int64_t, ndim=1]   grid_counts,
                             np.ndarray[np.float64_t, ndim=1] atom_radii):
@@ -161,8 +161,8 @@ def c_fingerprint(          np.ndarray[np.float64_t, ndim=2] crd,
     for atom_ind in range(natoms):
         atom_coordinate = crd[atom_ind]
         radius = atom_radii[atom_ind]
-        corners = c_corners_within_radius(atom_coordinate, radius, origin_crd, uper_most_corner_crd,
-                                              uper_most_corner, spacing, grid_x, grid_y, grid_z, grid_counts)
+        corners = c_corners_within_radius(atom_coordinate, radius, origin_crd, upper_most_corner_crd,
+                                              upper_most_corner, spacing, grid_x, grid_y, grid_z, grid_counts)
         for i, j, k in corners:
             grid_view[i,j,k] = 1.
     return grid
