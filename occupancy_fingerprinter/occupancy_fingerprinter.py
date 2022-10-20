@@ -165,7 +165,9 @@ object 3 class array type double rank 0 items {3} data follows
             raise Exception('File type not supported')
 
 
-def main():
+
+if __name__ == "__main__": # pragma: no cover
+    # Do something if this file is invoked on its own
     import time
     from pathlib import Path
 
@@ -199,10 +201,5 @@ def main():
     dx_path = (mod_path / "../data/site_test.dx").resolve()
     grid._sites[0].write(dx_path, c)
     print("--- %s seconds ---" % (time.time() - start_time))
-
-
-if __name__ == "__main__":
-    # Do something if this file is invoked on its own
-    main()
 
 

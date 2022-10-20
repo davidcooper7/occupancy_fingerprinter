@@ -74,7 +74,6 @@ def test_grid_init():
     c = a[0].reshape(tuple(b._counts))
     b.write(dx_path, c)
     assert os.path.exists(dx_path)
-    occupancy_fingerprinter.main()
 
 
 
