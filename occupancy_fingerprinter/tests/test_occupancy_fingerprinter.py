@@ -63,7 +63,7 @@ def test_grid_init():
     assert (g._sites[0]._spacing == b._spacing).all()
     h5_path = (mod_path / "../data/test.h5").resolve()
     a = g.cal_fingerprint(h5_path, n_tasks=1, return_array=True)
-    assert (a.shape == b._counts).all()
+    assert (a.shape == b._counts)
     assert (a.sum() == 113)
     with h5.File(h5_path, "r") as f:
         k = list(f.keys())
