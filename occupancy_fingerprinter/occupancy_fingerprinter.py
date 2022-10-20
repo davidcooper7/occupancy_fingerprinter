@@ -194,6 +194,8 @@ if __name__ == "__main__":
     import time
     start_time = time.time()
     a = grid.cal_fingerprint("./data/fingerprints.h5", n_tasks=1, return_array=True)
+    c = a[0].reshape(tuple(grid._sites[0]._counts))
+    grid._sites[0].write("./data/site_test.dx", c)
     print("--- %s seconds ---" % (time.time() - start_time))
 
 

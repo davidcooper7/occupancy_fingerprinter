@@ -70,6 +70,12 @@ def test_grid_init():
         assert (f[k[0]] == a[0]).all()
     p = occupancy_fingerprinter.process_trajectory(t,g._sites,g._atom_radii)
     assert (a == p).all()
+    dx_path = (mod_path / "../data/binding_site_test.dx").resolve()
+    c = a[0].reshape(tuple(b._counts))
+    b.write(dx_path, c)
+    assert os.path.exists(dx_path)
+
+
 
 
 
