@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="68b6e2b9-dd39-4a4b-b1a4-802b36a150b3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/occupancy_fingerprinter/occupancy_fingerprinter.py" beforeDir="false" afterPath="$PROJECT_DIR$/occupancy_fingerprinter/occupancy_fingerprinter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/occupancy_fingerprinter/tests/test_occupancy_fingerprinter.py" beforeDir="false" afterPath="$PROJECT_DIR$/occupancy_fingerprinter/tests/test_occupancy_fingerprinter.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +70,7 @@
       <workItem from="1666103158017" duration="5807000" />
       <workItem from="1666182736148" duration="3847000" />
       <workItem from="1666214730452" duration="3648000" />
-      <workItem from="1666274932856" duration="6555000" />
+      <workItem from="1666274932856" duration="7234000" />
     </task>
     <servers />
   </component>

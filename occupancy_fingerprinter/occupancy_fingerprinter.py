@@ -125,7 +125,7 @@ class BindingSite():
         Writes a grid in dx format
         """
         n_points = data['counts'][0] * data['counts'][1] * data['counts'][2]
-        if FN.endswith('.dx'):
+        if str(FN).endswith('.dx'):
             F = open(FN, 'w')
 
         F.write("""object 1 class gridpositions counts {0[0]} {0[1]} {0[2]}
@@ -159,10 +159,7 @@ object 3 class array type double rank 0 items {3} data follows
             'spacing': self._spacing,
             'vals': grid
         }
-        if FN.endswith('.nc'):
-            print('skip')
-        #       _write_nc(FN, data_n)
-        elif FN.endswith('.dx') or FN.endswith('.dx.gz'):
+        if str(FN).endswith('.dx') or str(FN).endswith('.dx.gz'):
             self.write_dx(FN, data, grid)
         else:
             raise Exception('File type not supported')
