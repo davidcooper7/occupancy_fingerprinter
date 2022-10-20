@@ -31,6 +31,8 @@ def process_trajectory(traj, sites, atom_radii):
                                  atom_radii))
         fingerprints[i, :] = np.concatenate(site_list, axis=0).flatten()
     return fingerprints
+
+
 class Grid():
     def __init__(self, traj):
         self._traj = traj
@@ -38,7 +40,7 @@ class Grid():
         self._sites = {}
         self._atom_radii = np.array([md.geometry.sasa._ATOMIC_RADII[atom.element.symbol] for atom in traj.top.atoms], dtype=np.float64)*10.
 
-    def cal_fingerprint(self, FN, n_tasks=0):
+    def cal_fingerprint(self, FN, n_tasks=0, return_array=False):
         assert len(self._sites) != 0, "No binding sites set."
         if n_tasks == 0:
             task_divisor = multiprocessing.cpu_count()
@@ -70,10 +72,13 @@ class Grid():
             fingerprints = np.concatenate(tuple(frames_list), axis=0)
             with h5.File(FN, 'w') as f:
                 f.create_dataset("frames", data=fingerprints, compression="gzip")
+            if return_array:
+                return fingerprints
 
     def add_binding_site(self, center, r, spacing):
         self._sites[self._n_sites] = BindingSite(center, r, spacing)
         self._n_sites += 1
+
 
 class BindingSite():
     def __init__(self, center, r, spacing):
@@ -167,6 +172,7 @@ if __name__ == "__main__":
     traj_path = "./data/CLONE0.xtc"
     top_path = "./data/prot_masses.pdb"
     t = md.load(traj_path, top=top_path)
+    t = t[:1]
     n_frames = t.n_frames
 
 
@@ -174,12 +180,16 @@ if __name__ == "__main__":
     center1 = np.array([58.390,73.130,27.410])
     center2 = np.array([90.460,85.970,50.260])
     spacing = np.array([0.5, 0.5, 0.5])
-    grid.add_binding_site(center1,8.,spacing)
-    grid.add_binding_site(center2,8.,spacing)
+    r = 8.
+    # center1 = np.array([58., 73., 27.])
+    # r = 3.
+    # spacing = np.array([1., 1., 1.])
+    grid.add_binding_site(center1,r,spacing)
+    grid.add_binding_site(center2,r,spacing)
 
     import time
     start_time = time.time()
-    grid.cal_fingerprint("./data/fingerprints.h5", n_tasks=32)
+    a = grid.cal_fingerprint("./data/fingerprints.h5", n_tasks=1, return_array=True)
     print("--- %s seconds ---" % (time.time() - start_time))
 
 

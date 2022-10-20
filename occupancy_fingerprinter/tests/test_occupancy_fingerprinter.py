@@ -13,6 +13,7 @@ from occupancy_fingerprinter import Grid
 
 import numpy as np
 import mdtraj as md
+import h5py as h5
 import os
 from pathlib import Path
 
@@ -47,7 +48,8 @@ def test_grid_init():
     traj_path = (mod_path / "../data/CLONE0.xtc").resolve()
     top_path = (mod_path / "../data/prot_masses.pdb").resolve()
     t = md.load(traj_path, top=top_path)
-    center = np.array([10., 10., 10.])
+    t = t[:1]
+    center = np.array([58., 73., 27.])
     r = 3.
     spacing = np.array([1., 1., 1.])
     g = Grid(t)
@@ -59,6 +61,14 @@ def test_grid_init():
     assert (g._sites[0]._center == b._center).all()
     assert g._sites[0]._r == b._r
     assert (g._sites[0]._spacing == b._spacing).all()
+    h5_path = (mod_path / "../data/test.h5").resolve()
+    a = g.cal_fingerprint(h5_path, n_tasks=1, return_array=True)
+    assert (a.shape == b._counts).all()
+    assert (a.sum() == 113)
+    with h5.File(h5_path, "r") as f:
+        k = list(f.keys())
+        assert k[0] == "frames"
+        assert (f[k[0]] == a[0]).all()
 
 
 
