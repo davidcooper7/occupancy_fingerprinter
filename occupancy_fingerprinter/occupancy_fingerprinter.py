@@ -166,8 +166,14 @@ object 3 class array type double rank 0 items {3} data follows
 
 
 def main():
-    traj_path = "./data/CLONE0.xtc"
-    top_path = "./data/prot_masses.pdb"
+    import time
+    from pathlib import Path
+
+    mod_path = Path(__file__).parent
+    start_time = time.time()
+
+    traj_path = (mod_path / "../data/CLONE0.xtc").resolve()
+    top_path = (mod_path / "../data/prot_masses.pdb").resolve()
     t = md.load(traj_path, top=top_path)
     t = t[:1]
     n_frames = t.n_frames
@@ -187,11 +193,11 @@ def main():
     spacing = np.array([1., 1., 1.])
     grid.add_binding_site(center1, r, spacing)
 
-    import time
-    start_time = time.time()
-    a = grid.cal_fingerprint("./data/fingerprints.h5", n_tasks=1, return_array=True)
+    h5_path = (mod_path / "../data/fingerprints.h5").resolve()
+    a = grid.cal_fingerprint(h5_path, n_tasks=1, return_array=True)
     c = a[0].reshape(tuple(grid._sites[0]._counts))
-    grid._sites[0].write("./data/site_test.dx", c)
+    dx_path = (mod_path / "../data/site_test.dx").resolve()
+    grid._sites[0].write(dx_path, c)
     print("--- %s seconds ---" % (time.time() - start_time))
 
 
