@@ -164,14 +164,13 @@ object 3 class array type double rank 0 items {3} data follows
         else:
             raise Exception('File type not supported')
 
-if __name__ == "__main__":
-    # Do something if this file is invoked on its own
+
+def main():
     traj_path = "./data/CLONE0.xtc"
     top_path = "./data/prot_masses.pdb"
     t = md.load(traj_path, top=top_path)
     t = t[:1]
     n_frames = t.n_frames
-
 
     grid = Grid(t)
     # real test
@@ -194,5 +193,10 @@ if __name__ == "__main__":
     c = a[0].reshape(tuple(grid._sites[0]._counts))
     grid._sites[0].write("./data/site_test.dx", c)
     print("--- %s seconds ---" % (time.time() - start_time))
+
+
+if __name__ == "__main__":
+    # Do something if this file is invoked on its own
+    main()
 
 
