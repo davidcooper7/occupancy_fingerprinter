@@ -177,15 +177,19 @@ if __name__ == "__main__":
 
 
     grid = Grid(t)
-    center1 = np.array([58.390,73.130,27.410])
-    center2 = np.array([90.460,85.970,50.260])
-    spacing = np.array([0.5, 0.5, 0.5])
-    r = 8.
-    # center1 = np.array([58., 73., 27.])
-    # r = 3.
-    # spacing = np.array([1., 1., 1.])
-    grid.add_binding_site(center1,r,spacing)
-    grid.add_binding_site(center2,r,spacing)
+    # real test
+    # center1 = np.array([58.390,73.130,27.410])
+    # center2 = np.array([90.460,85.970,50.260])
+    # spacing = np.array([0.5, 0.5, 0.5])
+    # r = 8.
+    # grid.add_binding_site(center1,r,spacing)
+    # grid.add_binding_site(center2,r,spacing)
+
+    # quicker test
+    center1 = np.array([58., 73., 27.])
+    r = 3.
+    spacing = np.array([1., 1., 1.])
+    grid.add_binding_site(center1, r, spacing)
 
     import time
     start_time = time.time()

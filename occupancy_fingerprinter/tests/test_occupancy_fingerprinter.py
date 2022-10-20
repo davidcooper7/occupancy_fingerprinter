@@ -68,6 +68,8 @@ def test_grid_init():
         k = list(f.keys())
         assert k[0] == "frames"
         assert (f[k[0]] == a[0]).all()
+    p = occupancy_fingerprinter.process_trajectory(t,g._sites,g._atom_radii)
+    assert (a == p).all()
 
 
 
