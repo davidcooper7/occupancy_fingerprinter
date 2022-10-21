@@ -72,11 +72,16 @@ def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
     cdef:
         list corners
         Py_ssize_t count_i, count_j, count_k
-        Py_ssize_t i, j, k
+        Py_ssize_t i, j, k, l
+        int lmax = atom_coordinate.shape[0]
         float r, R
 
-        np.ndarray[np.int64_t, ndim=1] lower_corner
-        np.ndarray[np.int64_t, ndim=1] corner
+        np.ndarray[np.int64_t, ndim=1] lower_corner = np.zeros([lmax], dtype=np.int64)
+        long[:] lower_corner_view = lower_corner
+        np.ndarray[np.int64_t, ndim=1] corner = np.zeros([lmax], dtype=np.int64)
+        long[:] corner_view = corner
+        np.ndarray[np.int64_t, ndim=1] tmp_corner = np.zeros([lmax], dtype=np.int64)
+        long[:] tmp_corner_view = tmp_corner
 
         np.ndarray[np.float64_t, ndim=1] lower_corner_crd
         np.ndarray[np.float64_t, ndim=1] corner_crd
@@ -100,10 +105,13 @@ def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
 
         corners = []
         for i in range(-count_i, count_i + 1):
+            tmp_corner_view[0] = i
             for j in range(-count_j, count_j + 1):
+                tmp_corner_view[1] = j
                 for k in range(-count_k, count_k + 1):
-
-                    corner = lower_corner + np.array([i, j, k], dtype=int)
+                    tmp_corner_view[2] = k
+                    for l in range(lmax):
+                        corner_view[l] = lower_corner_view[l] + tmp_corner_view[l]
 
                     if np.all(corner >= 0) and np.all(corner <= upper_most_corner):
                         corner_crd = c_get_corner_crd(corner, grid_x, grid_y, grid_z)

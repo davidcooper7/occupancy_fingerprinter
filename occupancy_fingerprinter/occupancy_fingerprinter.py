@@ -174,32 +174,33 @@ if __name__ == "__main__": # pragma: no cover
 
     mod_path = Path(__file__).parent
 
-    traj_path = (mod_path / "../data/CLONE0.xtc").resolve()
-    top_path = (mod_path / "../data/prot_masses.pdb").resolve()
+    traj_path = (mod_path / "./data/CLONE0.xtc").resolve()
+    top_path = (mod_path / "./data/prot_masses.pdb").resolve()
     t = md.load(traj_path, top=top_path)
     t = t[:1]
     n_frames = t.n_frames
     start_time = time.time()
     grid = Grid(t)
     # real test
-    # center1 = np.array([58.390,73.130,27.410])
-    # center2 = np.array([90.460,85.970,50.260])
-    # spacing = np.array([0.5, 0.5, 0.5])
-    # r = 8.
-    # grid.add_binding_site(center1,r,spacing)
-    # grid.add_binding_site(center2,r,spacing)
+    center1 = np.array([58.390,73.130,27.410])
+    center2 = np.array([90.460,85.970,50.260])
+    spacing = np.array([0.5, 0.5, 0.5])
+    r = 8.
+    grid.add_binding_site(center1,r,spacing)
+    grid.add_binding_site(center2,r,spacing)
 
     # quicker test
-    center1 = np.array([58., 73., 27.])
-    r = 3.
-    spacing = np.array([1., 1., 1.])
-    grid.add_binding_site(center1, r, spacing)
+    # center1 = np.array([58., 73., 27.])
+    # r = 3.
+    # spacing = np.array([1., 1., 1.])
+    # grid.add_binding_site(center1, r, spacing)
 
-    h5_path = (mod_path / "../data/fingerprints.h5").resolve()
+    h5_path = (mod_path / "./data/fingerprints.h5").resolve()
     a = grid.cal_fingerprint(h5_path, n_tasks=1, return_array=True)
-    c = a[0].reshape(tuple(grid._sites[0]._counts))
-    dx_path = (mod_path / "../data/site_test.dx").resolve()
-    grid._sites[0].write(dx_path, c)
+    # c = a[0].reshape(tuple(grid._sites[0]._counts))
+    # dx_path = (mod_path / "./data/site_test.dx").resolve()
+    # grid._sites[0].write(dx_path, c)
+
     print("--- %s seconds ---" % (time.time() - start_time))
 
 
