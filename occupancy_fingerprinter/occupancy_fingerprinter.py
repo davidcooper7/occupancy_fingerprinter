@@ -196,11 +196,22 @@ if __name__ == "__main__": # pragma: no cover
     # grid.add_binding_site(center1, r, spacing)
 
     h5_path = (mod_path / "./data/fingerprints.h5").resolve()
-    a = grid.cal_fingerprint(h5_path, n_tasks=1, return_array=True)
+    # a = grid.cal_fingerprint(None, n_tasks=1, return_array=True)
     # c = a[0].reshape(tuple(grid._sites[0]._counts))
     # dx_path = (mod_path / "./data/site_test.dx").resolve()
     # grid._sites[0].write(dx_path, c)
-
+    c = c_fingerprint(t.xyz[0].astype(np.float64) * 10.,
+                  grid._sites[0]._grid_x,
+                  grid._sites[0]._grid_y,
+                  grid._sites[0]._grid_z,
+                  grid._sites[0]._origin,
+                  grid._sites[0]._upper_most_corner_crd,
+                  grid._sites[0]._upper_most_corner,
+                  grid._sites[0]._spacing,
+                  grid._sites[0]._counts,
+                  grid._atom_radii)
+    dx_path = (mod_path / "./data/site_test2.dx").resolve()
+    grid._sites[0].write(dx_path, c)
     print("--- %s seconds ---" % (time.time() - start_time))
 
 

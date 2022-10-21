@@ -7,6 +7,22 @@ cdef extern from "math.h":
     double sqrt(double)
 
 @cython.boundscheck(False)
+def c_greater_or_equal(np.ndarray[np.int64_t, ndim=1] corner, long x):
+    cdef int lmax = corner.shape[0]
+    for i in range(lmax):
+        if corner[i] < x:
+            return False
+    return True
+
+def c_less_or_equal(np.ndarray[np.int64_t, ndim=1] corner1, np.ndarray[np.int64_t, ndim=1] corner2):
+    cdef int lmax = corner1.shape[0]
+    cdef int i
+    for i in range(lmax):
+        if corner1[i] > corner2[i]:
+            return False
+    return True
+
+@cython.boundscheck(False)
 def cdistance(np.ndarray[np.float64_t, ndim=1] x, np.ndarray[np.float64_t, ndim=1] y):
     cdef int i, lmax
     cdef double d, tmp
@@ -26,7 +42,9 @@ def c_get_corner_crd(np.ndarray[np.int64_t, ndim=1] corner,
         int i, j, k
         np.ndarray[np.float64_t, ndim=1] crd
 
-    i, j, k = corner
+    i = corner[0]
+    j = corner[1]
+    k = corner[2]
     crd = np.array([grid_x[i], grid_y[j], grid_z[k]] , dtype=float)
     return crd
 
@@ -96,7 +114,6 @@ def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
 
     lower_corner = c_lower_corner_of_containing_cube(atom_coordinate, origin_crd, upper_most_corner_crd, spacing)
     if lower_corner.shape[0] > 0:
-
         lower_corner_crd = c_get_corner_crd(lower_corner, grid_x, grid_y, grid_z)
         r = radius + cdistance(lower_corner_crd, atom_coordinate)
 
@@ -110,14 +127,15 @@ def c_corners_within_radius(np.ndarray[np.float64_t, ndim=1] atom_coordinate,
                 tmp_corner_view[1] = j
                 for k in range(-count_k, count_k + 1):
                     tmp_corner_view[2] = k
+                    # corner = lower_corner + np.array([i, j, k], dtype=int)
                     for l in range(lmax):
-                        corner_view[l] = lower_corner_view[l] + tmp_corner_view[l]
-
-                    if np.all(corner >= 0) and np.all(corner <= upper_most_corner):
+                        corner_view[l] = lower_corner[l] + tmp_corner_view[l]
+                        # print(lower_corner_view[l], tmp_corner_view[l], corner_view[l], corner[l])
+                    if c_greater_or_equal(corner,0) and c_less_or_equal(corner,upper_most_corner):
                         corner_crd = c_get_corner_crd(corner, grid_x, grid_y, grid_z)
 
                         if cdistance(corner_crd, atom_coordinate) <= radius:
-                            corners.append(corner)
+                            corners.append(np.array([corner_view[0], corner_view[1], corner_view[2]], dtype=int))
         return corners
     else:
         lower_bound = origin_crd - radius
