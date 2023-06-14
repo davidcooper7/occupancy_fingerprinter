@@ -14,7 +14,8 @@ A tool to generate grid-based binding site shapes.
 
 ### Copyright
 
-Copyright (c) 2022, Jim Tufts
+Copyright (c) 2022, 2023 Jim Tufts
+
 
 
 #### Acknowledgements
