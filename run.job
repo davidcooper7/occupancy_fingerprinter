@@ -1,0 +1,19 @@
+#!/bin/bash
+#SBATCH --job-name="FINGERPRINT"
+#SBATCH --output="/expanse/lustre/projects/iit122/dcooper/CB2/logs/FINGERPRINT.%j.%N.out"
+#SBATCH --partition=compute
+#SBATCH --account=iit122
+#SBATCH -t 48:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=128
+#SBATCH --mem=230G
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=dcooper6@hawk.iit.edu
+
+source ~/.bashrc
+
+conda activate vina
+
+cd $SLURM_SUBMIT_DIR
+
+python run.py
