@@ -16,4 +16,4 @@ conda activate vina
 
 cd $SLURM_SUBMIT_DIR
 
-python run.py
+python run.py $1

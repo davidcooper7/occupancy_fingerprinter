@@ -31,14 +31,7 @@ if __name__ == '__main__':
     resSeqs_to_include = params_dict['resSeqs_to_include']
     binding_pocket_resSeqs = params_dict["binding_pocket_resSeqs"]
     super_traj_dir = params_dict['super_traj_dir']
-    
     traj, frame_labels = combine_trajectories(traj_dir, resSeqs_to_include, binding_pocket_resSeqs, super_traj_dir)
-
-    response = input(f'Slicing traj / 1000 with shape {traj.n_frames}, are you sure you want to continue? y/n?\n')
-    if response != 'y':
-        raise Exception(response)
-    else:
-        traj = traj[::1000]
     
 
     # Identify binding site from trajectory
@@ -100,12 +93,6 @@ if __name__ == '__main__':
     if not os.path.exists(lig_dir):
         os.mkdir(lig_dir)
     ligands = params_dict['ligands']
-    response = input('ARE YOU SURE BOZO?')
-    if response != 'y':
-        raise Exception()
-    else:
-        ligands = {'CP55490':  'CCCCCCC(C)(C)C1=CC(=C(C=C1)[C@@H]2C[C@@H](CC[C@H]2CCCO)O)O',
-           'HU308': 'CCCCCCC(C)(C)C1=CC(=C(C(=C1)OC)[C@@H]2C=C([C@@H]3C[C@H]2C3(C)C)CO)OC'}
     lig_names = []
     lig_pdbqts = []
     for lig, smiles in ligands.items():
@@ -115,13 +102,6 @@ if __name__ == '__main__':
 
     # Iterate through n_clusters
     n_clusters = params_dict['n_clusters']
-    response = input('ARE YOU SURE BOZO?')
-    if response != 'y':
-        raise Exception()
-    else:
-        n_clusters = [2, 3, 4]
-    
-    
     exp_avgs = np.empty((len(n_clusters), len(list(ligands.keys()))))
     for i, n in enumerate(n_clusters):
 
