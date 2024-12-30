@@ -20,6 +20,9 @@ from scipy.cluster.hierarchy import linkage, fcluster
 from sklearn.metrics import pairwise_distances
 from scipy.spatial.distance import squareform
 from vina.vina import Vina
+from os.path import expanduser
+home = expanduser("~")
+import multiprocessing as mp
 
 
 """
@@ -101,7 +104,14 @@ def prep_ligand(lig_smiles, lig_name, save_dir):
         os.mkdir(pdbqt_dir)
     cwd = os.getcwd()
     os.chdir(mol2_dir)
-    os.system(f'python2 /home/dcooper/miniconda3/envs/vina/bin/prepare_ligand4.py -l {lig_name +".mol2"} -o {os.path.join(pdbqt_dir, lig_name +".pdbqt")} -U nphs_lps')
+    if os.path.exists(os.path.join(home, 'miniconda3/envs/vina/bin/prepare_ligand4.py')):
+        os.system(f'python2 ~/miniconda3/envs/vina/bin/prepare_ligand4.py -l {lig_name +".mol2"} -o {os.path.join(pdbqt_dir, lig_name +".pdbqt")} -U nphs_lps')
+    
+    elif os.path.exists(os.path.join(home, 'anaconda3/envs/vina/bin/prepare_ligand4.py')):
+        os.system(f'python2 ~/anaconda3/envs/vina/bin/prepare_ligand4.py -l {lig_name +".mol2"} -o {os.path.join(pdbqt_dir, lig_name +".pdbqt")} -U nphs_lps')
+    else:
+        raise FileNotFoundError(os.path.join(home, 'miniconda3/envs/vina/bin/prepare_ligand4.py'))
+    
     os.chdir(cwd)
 
     return os.path.join(pdbqt_dir, lig_name +".pdbqt")
@@ -112,8 +122,12 @@ def prep_receptor(pdb_dir, pdbqt_dir):
     # Prepare each pdb w/ mgltools
     for pdb in os.listdir(pdb_dir):
         if pdb.endswith('.pdb'):
-            os.system(f'python2 /home/dcooper/miniconda3/envs/vina/bin/prepare_receptor4.py -r {os.path.join(pdb_dir, pdb)} -o {os.path.join(pdbqt_dir, pdb.split('.')[0] + '.pdbqt')} -U nphs_lps')
-
+            if os.path.exists(os.path.join(home, 'minconda3/envs/vina/bin/prepare_receptor4.py')):
+                os.system(f'python2 ~/miniconda3/envs/vina/bin/prepare_receptor4.py -r {os.path.join(pdb_dir, pdb)} -o {os.path.join(pdbqt_dir, pdb.split('.')[0] + '.pdbqt')} -U nphs_lps')
+            elif os.path.exists(os.path.join(home, 'anaconda3/envs/vina/bin/prepare_receptor4.py')):
+                os.system(f'python2 ~/anaconda3/envs/vina/bin/prepare_receptor4.py -r {os.path.join(pdb_dir, pdb)} -o {os.path.join(pdbqt_dir, pdb.split('.')[0] + '.pdbqt')} -U nphs_lps')
+            else:
+                raise FileNotFoundError(os.path.join(home, 'anaconda3/envs/vina/bin/prepare_receptor4.py'))
 
 
 """
@@ -121,25 +135,43 @@ DOCKING METHODS
 """
 
 
-def vina_dock(lig_dir, lig_pdbqt_list, receptor_pdbqt, center, box_size):
+def vina_dock(lig_dir, lig_pdbqt_list, receptor_pdbqt, center, box_size, lig_pdbqt_out_dir=None, n_poses=1, exhaustiveness=8):
+
+    
     # Build vina obj
-    v = Vina(cpu=128, verbosity=0)
+    try:
+        n_threads = int(os.environ['NUM_THREADS'])
+    except:
+        n_threads = mp.cpu_count()
+    v = Vina(cpu=n_threads, verbosity=0)
     v.set_receptor(rigid_pdbqt_filename=receptor_pdbqt)
     # Prepare
-    v.compute_vina_maps(center, box_size)
+    v.compute_vina_maps(center, box_size, force_even_voxels=True)
+
 
     # Set ligands
-    scores = np.empty(len(lig_pdbqt_list))
+    scores = np.zeros((len(lig_pdbqt_list), n_poses))
     for i, lig_pdbqt in enumerate(lig_pdbqt_list):
 
+        print(os.path.join(lig_dir, lig_pdbqt))
         v.set_ligand_from_file(os.path.join(lig_dir, lig_pdbqt))
-
+            
         # Dock
-        v.dock(n_poses=1, exhaustiveness=8)
-        scores[i] = v.score()[0]
+        v.dock(n_poses=n_poses, exhaustiveness=exhaustiveness)
+        lig_scores = v.energies(n_poses=n_poses)[:,0]
+        scores[i, :len(lig_scores)] = lig_scores.copy() 
+
+        # Save pose, if specified
+        if lig_pdbqt_out_dir is not None:
+            lig_name = lig_pdbqt.split('/')[-1].split('.')[0]
+            print(lig_pdbqt_out_dir, lig_name)
+            print(os.path.join(lig_pdbqt_out_dir, lig_name+'.pdbqt'))
+            v.write_poses(os.path.join(lig_pdbqt_out_dir, lig_name+'.pdbqt'), n_poses=n_poses, overwrite=True)
+
 
     return scores
 
+    
 
 def exp_avg(scores):
     beta = 1.0
