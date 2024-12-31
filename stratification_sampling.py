@@ -122,7 +122,7 @@ def prep_receptor(pdb_dir, pdbqt_dir):
     # Prepare each pdb w/ mgltools
     for pdb in os.listdir(pdb_dir):
         if pdb.endswith('.pdb'):
-            if os.path.exists(os.path.join(home, 'minconda3/envs/vina/bin/prepare_receptor4.py')):
+            if os.path.exists(os.path.join(home, 'miniconda3/envs/vina/bin/prepare_receptor4.py')):
                 os.system(f'python2 ~/miniconda3/envs/vina/bin/prepare_receptor4.py -r {os.path.join(pdb_dir, pdb)} -o {os.path.join(pdbqt_dir, pdb.split('.')[0] + '.pdbqt')} -U nphs_lps')
             elif os.path.exists(os.path.join(home, 'anaconda3/envs/vina/bin/prepare_receptor4.py')):
                 os.system(f'python2 ~/anaconda3/envs/vina/bin/prepare_receptor4.py -r {os.path.join(pdb_dir, pdb)} -o {os.path.join(pdbqt_dir, pdb.split('.')[0] + '.pdbqt')} -U nphs_lps')
