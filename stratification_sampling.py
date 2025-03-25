@@ -54,7 +54,7 @@ def compute_centroids(dist_matrix: np.array, assignments: np.array):
         inds = np.where(assignments == cluster_no)[0]
         cluster_dist_matrix = dist_matrix[inds]
         cluster_dist_matrix = cluster_dist_matrix[:,inds]
-        centroids[i] = np.where(cluster_dist_matrix.sum(axis=0) == cluster_dist_matrix.sum(axis=0).min())[0][0]
+        centroids[i] = int(inds[np.where(cluster_dist_matrix.sum(axis=0) == cluster_dist_matrix.sum(axis=0).min())[0][0]])
 
     return np.array(centroids)
 
